@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,abort
 import json
-import os.path
-
+import os
 
 
 app = Flask(__name__)
@@ -35,8 +34,10 @@ def file(filename):
             r2 = json.loads(f.read())
         r2a = [r2['title'],r2['content'],r2['created_time']]  
         return render_template('file.html',r2a=r2a)
-    elif filename == 'filename':
-        os.path.exists('/home/shiyanlou/files/filename.json') == False
+            
+    elif not filename == 'helloworld':
+        return render_template('404.html'),404
+    elif not filename == 'helloshiyanlou':
         return render_template('404.html'),404
     
 if __name__ == '__main__':
