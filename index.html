@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block content %}
-<p>Title:{{  title[0] }}</p>
-<p>Title:{{  title[1] }}</p>
-{% endblock %}
+<ul>
+{% for file in files %}
+<li><a href="{{ url_for('file',file_id=file.id) }}" target="_blank">{{ file.title }}</a></li>
+{% endfor %}
+</ul>

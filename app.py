@@ -18,15 +18,14 @@ class Category(db.Model):
     __tablename__ = 'Category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
+    files = db.relationship('File') 
     def __init__(self,name):
         self.name = name
-    def __repr__(self):
-        return '<Category %r>'% self.id
 
 class File(db.Model):
     __tablename__ = 'File'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80))
+    title = db.Column(db.String(80),unique=True)
     created_time = db.Column(db.DateTime)
     content = db.Column(db.Text)
     category_id = db.Column(db.Integer, db.ForeignKey('Category.id'))
@@ -38,8 +37,6 @@ class File(db.Model):
             created_time = datetime.utcnow()
         self.created_time = created_time
         self.category = category
-    def __repr__(self):
-        return '<File %r>'% self.id
 
 def insert_datas():
     java = Category('Java')
