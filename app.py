@@ -37,6 +37,40 @@ class File(db.Model):
             created_time = datetime.utcnow()
         self.created_time = created_time
         self.category = category
+        
+    def add_tag(self, tag_name):
+        file_item = mongo.files.find_one({'file_id': self.id})
+        if file_item:
+            tags = file_item['tags']
+            if tag_name not in tags:
+                tags.append(tag_name)
+            mongo.files.update_one({'file_id': self.id}, {'$set': {'tags': tags}})
+        else:
+            tags = [tag_name]
+            mongo.files.insert_one({'file_id': self.id, 'tags': tags})
+        return tags
+
+    def remove_tag(self, tag_name):
+        file_item = mongo.files.find_one({'file_id': self.id})
+        if file_item:
+            tags = file_item['tags']
+            try:
+                new_tags = tags.remove(tag_name)
+            except ValueError:
+                return tags
+            mongo.files.update_one({'file_id': self.id}, {'$set', {'tags': new_tags}})
+            return new_tags
+        return []
+
+    @property
+    def tags(self):
+        file_item = mongo.files.find_one({'file_id': self.id})
+        if file_item:
+            print(file_item)
+            return file_item['tags']
+        else:
+            return []    
+        
 
 def insert_datas():
     java = Category('Java')
@@ -48,6 +82,11 @@ def insert_datas():
     db.session.add(file1)
     db.session.add(file2)
     db.session.commit()
+    file1.add_tag('tech')
+    file1.add_tag('java')
+    file1.add_tag('linux')
+    file2.add_tag('tech')
+    file2.add_tag('python')
 
 @app.route('/')
 def index():
